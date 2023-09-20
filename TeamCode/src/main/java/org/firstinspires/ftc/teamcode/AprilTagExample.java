@@ -11,7 +11,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 
 @Autonomous
-public class PracticalAprilTag extends LinearOpMode {
+public class AprilTagExample extends LinearOpMode {
 
 
     // Allocate memory for our processors
