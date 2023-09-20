@@ -87,11 +87,33 @@ public class testAuton extends LinearOpMode {
 
         if(isStopRequested()) return;
 
-        // Creates a trajectory for our robot to follow based off of the data from the apriltag
-        moveToTag = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(horizontalDistance)
-                .forward(forwardsDistance)
-                .build();
+        // Our forwards distance value will be negative, so we change it to positive
+        // We also subtract 3 inches from the distance needed to be traveled because
+        // we don't need to crash into the backdrop
+        forwardsDistance = (-forwardsDistance) - 3;
+
+        // If the tag is to the left of our robot
+        if (horizontalDistance < 0){
+
+            // Set horizontal distance to be positive
+            horizontalDistance = -horizontalDistance;
+
+            // Creates a trajectory for our robot to follow based off of the data from the apriltag
+            moveToTag = drive.trajectoryBuilder(new Pose2d())
+                    .strafeLeft(horizontalDistance)
+                    .forward(forwardsDistance)
+                    .build();
+        // If the tag is to the right of our robot
+        } else {
+
+            // Creates a trajectory for our robot to follow based off of the data from the apriltag
+            // The value of horizontal distance will already be positive so no need to change it
+            moveToTag = drive.trajectoryBuilder(new Pose2d())
+                    .strafeRight(horizontalDistance)
+                    .forward(forwardsDistance)
+                    .build();
+        }
+
 
         // drives to the trajectory
         drive.followTrajectory(moveToTag);
