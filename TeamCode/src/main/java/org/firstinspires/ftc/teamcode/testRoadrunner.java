@@ -52,7 +52,8 @@ public class testRoadrunner extends LinearOpMode {
     /**
      * Trajectory for our robot to move to the tag
      */
-    private Trajectory moveToTag;
+    private Trajectory moveHorizontal;
+    private Trajectory moveForward;
 
     @Override
     public void runOpMode(){
@@ -83,40 +84,48 @@ public class testRoadrunner extends LinearOpMode {
             }
         }
 
-        waitForStart();
-
-        if(isStopRequested()) return;
-
         // Our forwards distance value will be negative, so we change it to positive
         // We also subtract 3 inches from the distance needed to be traveled because
         // we don't need to crash into the backdrop
-        forwardsDistance = (-forwardsDistance) - 3;
+        forwardsDistance = (forwardsDistance) - 3;
 
         // If the tag is to the left of our robot
         if (horizontalDistance < 0){
 
             // Set horizontal distance to be positive
-            horizontalDistance = -horizontalDistance;
+            horizontalDistance = -horizontalDistance + 4;
 
             // Creates a trajectory for our robot to follow based off of the data from the apriltag
-            moveToTag = drive.trajectoryBuilder(new Pose2d())
+            moveHorizontal = drive.trajectoryBuilder(new Pose2d())
                     .strafeLeft(horizontalDistance)
-                    .forward(forwardsDistance)
                     .build();
-        // If the tag is to the right of our robot
+            // If the tag is to the right of our robot
         } else {
+
+            horizontalDistance +=4;
 
             // Creates a trajectory for our robot to follow based off of the data from the apriltag
             // The value of horizontal distance will already be positive so no need to change it
-            moveToTag = drive.trajectoryBuilder(new Pose2d())
+            moveHorizontal = drive.trajectoryBuilder(new Pose2d())
                     .strafeRight(horizontalDistance)
-                    .forward(forwardsDistance)
                     .build();
         }
 
+        moveForward = drive.trajectoryBuilder(new Pose2d())
+                        .forward(forwardsDistance)
+                        .build();
+
+        waitForStart();
+
+        if(isStopRequested()) return;
+
+
+
 
         // drives to the trajectory
-        drive.followTrajectory(moveToTag);
+        drive.followTrajectory(moveHorizontal);
+        sleep(1000);
+        drive.followTrajectory(moveForward);
 
     }
 }
