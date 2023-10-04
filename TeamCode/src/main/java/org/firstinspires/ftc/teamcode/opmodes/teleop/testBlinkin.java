@@ -31,8 +31,7 @@ public class testBlinkin extends OpMode {
 
     public void loop(){
 
-        // Default pattern of led driver
-        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+
 
         // Variable to track joystick movements
         strafe = gamepad1.left_stick_x;
@@ -48,7 +47,7 @@ public class testBlinkin extends OpMode {
         // If we are going right
         else if (strafe > 0.1){
             // Set the pattern of the other side to be equal to this
-            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_LIGHT_CHASE);
+            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_LARSON_SCANNER);
         }
 
     }
