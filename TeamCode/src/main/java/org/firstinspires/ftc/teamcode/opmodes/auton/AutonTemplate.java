@@ -18,13 +18,13 @@ public class AutonTemplate extends LinearOpMode {
 
     private VisionPortal visionPortal;
 
-    private double horizontalDistance;
+    private double coordinates;
 
-    private final double horizontalNegative = -1.25;
+    private double leftCoordinatesThreshold;
 
-    private final double horizontalPositive = 1.25;
+    private double rightCoordinatesThreshold;
 
-    private int spikeAndTagNum;
+
 
     @Override
     public void runOpMode(){
@@ -42,6 +42,7 @@ public class AutonTemplate extends LinearOpMode {
 
             for (Recognition i: recognitions){
 
+                coordinates = i.getLeft();
 
             }
 
@@ -49,6 +50,11 @@ public class AutonTemplate extends LinearOpMode {
 
         waitForStart();
 
+
+        // If our coordinates of our object are to the left
+        if (coordinates < leftCoordinatesThreshold) {
+
+        }
 
 
     }
