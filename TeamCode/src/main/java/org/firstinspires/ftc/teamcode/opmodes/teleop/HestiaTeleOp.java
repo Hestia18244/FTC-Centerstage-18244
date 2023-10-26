@@ -104,7 +104,7 @@ public class HestiaTeleOp extends OpMode {
         forward = gamepad1.left_stick_y;
         strafe = gamepad1.left_stick_x;
         turn = gamepad1.right_stick_x;
-        slide = gamepad2.left_stick_y;
+        slide = .75*gamepad2.left_stick_y;
 
 
         // If this is the first loop where there is activity
