@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous
 public class AutonRedFar extends LinearOpMode {
@@ -13,12 +14,15 @@ public class AutonRedFar extends LinearOpMode {
     private DcMotor backLeft;
     private DcMotor backRight;
 
+    private Servo claw;
+
     public void runOpMode(){
 
         frontRight = hardwareMap.dcMotor.get("frontRight");
         frontLeft = hardwareMap.dcMotor.get("frontLeft");
         backLeft = hardwareMap.dcMotor.get("backLeft");
         backRight = hardwareMap.dcMotor.get("backRight");
+        claw = hardwareMap.servo.get("claw");
 
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -27,6 +31,7 @@ public class AutonRedFar extends LinearOpMode {
 
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        claw.setPosition(.42);
 
         waitForStart();
 
@@ -35,7 +40,7 @@ public class AutonRedFar extends LinearOpMode {
         move(1200, 0, 0, 1, 1000);
         move(0, 950, 0, 1, 1000);
 
-
+        claw.setPosition(.72);
 
     }
 

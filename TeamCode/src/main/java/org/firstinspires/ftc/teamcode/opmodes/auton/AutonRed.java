@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous
 public class AutonRed extends LinearOpMode {
@@ -11,7 +12,9 @@ public class AutonRed extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor frontLeft;
     private DcMotor backLeft;
+
     private DcMotor backRight;
+    private Servo claw;
 
     public void runOpMode(){
 
@@ -19,6 +22,7 @@ public class AutonRed extends LinearOpMode {
         frontLeft = hardwareMap.dcMotor.get("frontLeft");
         backLeft = hardwareMap.dcMotor.get("backLeft");
         backRight = hardwareMap.dcMotor.get("backRight");
+        claw = hardwareMap.servo.get("claw");
 
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -28,11 +32,15 @@ public class AutonRed extends LinearOpMode {
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        claw.setPosition(.42);
+
+
         waitForStart();
 
-        move(0, 2000, 0, 1, 30000);
+        move(0, 2000, 0, 1, 1000);
 
 
+        claw.setPosition(.72);
 
     }
 

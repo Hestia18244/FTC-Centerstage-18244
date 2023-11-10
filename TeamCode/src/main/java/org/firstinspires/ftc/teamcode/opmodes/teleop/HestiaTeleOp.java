@@ -24,6 +24,8 @@ public class HestiaTeleOp extends OpMode {
 
     private DcMotor slider;
 
+//    private DcMotor linearMotor;
+
     private Servo launcher;
 
     private Servo claw;
@@ -45,7 +47,9 @@ public class HestiaTeleOp extends OpMode {
 
     private double slide;
 
-    private double towerTicks = 5281.1;
+    private double linear;
+
+    private final double towerTicks = 5281.1;
 
     // This variable will help me determine whether or not to reset the time
     private boolean isFirstLoop = true;
@@ -70,8 +74,8 @@ public class HestiaTeleOp extends OpMode {
         towerLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         towerLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         towerLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        towerLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+//        linearMotor = hardwareMap.dcMotor.get("linearMotor");
 
         // Hardware mapping of the driver and setting the default pattern
 //        lights = hardwareMap.get(RevBlinkinLedDriver.class,"lights");
@@ -82,10 +86,10 @@ public class HestiaTeleOp extends OpMode {
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Locks all the motors whenever joystick movement is not detected
-//        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         launcher.setPosition(.27);
 
@@ -103,8 +107,9 @@ public class HestiaTeleOp extends OpMode {
         // At the start of the loop, take the values of the joystick and set them to our variables
         forward = gamepad1.left_stick_y;
         strafe = gamepad1.left_stick_x;
-        turn = gamepad1.right_stick_x;
+        turn = .75*gamepad1.right_stick_x;
         slide = .75*gamepad2.left_stick_y;
+        linear = gamepad2.right_stick_y;
 
 
         // If this is the first loop where there is activity
@@ -136,6 +141,7 @@ public class HestiaTeleOp extends OpMode {
 
 
         slider.setPower(slide);
+//        linearMotor.setPower(linear);
 
         // Code to launch the servo
         if ((gamepad2.dpad_up)) {
@@ -166,6 +172,7 @@ public class HestiaTeleOp extends OpMode {
         if (gamepad2.b){
             macro(0.0020);
         }
+
 
         telemetry.addData("Motor arm ticks: ", towerLeft.getCurrentPosition());
 

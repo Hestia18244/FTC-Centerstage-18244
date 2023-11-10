@@ -6,44 +6,77 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+
+import java.util.List;
+
 @Autonomous
-public class AutonBlueFar extends LinearOpMode {
+public class AutonRedDetection extends LinearOpMode {
+
+
+
 
     private DcMotor frontRight;
     private DcMotor frontLeft;
-    private DcMotor backLeft;
     private DcMotor backRight;
+    private DcMotor backLeft;
+
     private Servo claw;
+
+    private TfodProcessor tfodProcessor;
+
+    private VisionPortal visionPortal;
 
     public void runOpMode(){
 
-        frontRight = hardwareMap.dcMotor.get("frontRight");
+
+
+        tfodProcessor = new TfodProcessor.Builder()
+                .build();
+        visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "Webcam 1"), tfodProcessor);
+
         frontLeft = hardwareMap.dcMotor.get("frontLeft");
+        frontRight = hardwareMap.dcMotor.get("frontRight");
         backLeft = hardwareMap.dcMotor.get("backLeft");
         backRight = hardwareMap.dcMotor.get("backRight");
-        claw = hardwareMap.servo.get("claw");
 
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        claw.setPosition(.42);
+        claw = hardwareMap.servo.get("claw");
+
+
+
+        List<Recognition> currentRecognitions = tfodProcessor.getRecognitions();
+        telemetry.addData("# Objects Detected", currentRecognitions.size());
+
+        // Step through the list of recognitions and display info for each one.
+        for (Recognition recognition : currentRecognitions) {
+            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
+            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+
+            telemetry.addData(""," ");
+            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+            telemetry.addData("- Position", "%.0f / %.0f", x, y);
+            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+        }   // end for() loop
+
+
+
 
         waitForStart();
 
-        move(-2100, 0, 0, 1, 1000);
-        move(0,-3200,0,1,1000);
-        move(1200, 0, 0, 1, 1000);
-        move(0, -950, 0, 1, 1000);
-
-        claw.setPosition(.72);
-
-
 
     }
+
 
     public void move(int forward, int strafe, int turn, double power, int ms){
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -73,4 +106,5 @@ public class AutonBlueFar extends LinearOpMode {
         sleep(ms);
 
     }
+
 }
