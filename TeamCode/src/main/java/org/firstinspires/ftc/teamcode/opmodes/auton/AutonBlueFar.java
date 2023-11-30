@@ -37,11 +37,13 @@ public class AutonBlueFar extends LinearOpMode {
         move(-2100, 0, 0, 1, 1000);
         move(0,-3200,0,1,1000);
         move(1200, 0, 0, 1, 1000);
-        move(0, -950, 0, 1, 1000);
+        move(0, -1000, 0, 1, 1000);
+        move(0, 0, -1000,1, 1000);
 
         claw.setPosition(.72);
 
 
+        sleep(29000);
 
     }
 

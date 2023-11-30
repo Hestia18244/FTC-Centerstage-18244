@@ -37,10 +37,12 @@ public class AutonRed extends LinearOpMode {
 
         waitForStart();
 
-        move(0, 2000, 0, 1, 1000);
+        move(0, 2100, 0, 1, 1000);
 
 
         claw.setPosition(.72);
+
+        sleep(29000);
 
     }
 

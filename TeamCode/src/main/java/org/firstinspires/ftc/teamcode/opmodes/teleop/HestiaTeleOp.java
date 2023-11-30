@@ -109,7 +109,7 @@ public class HestiaTeleOp extends OpMode {
         strafe = gamepad1.left_stick_x;
         turn = .75*gamepad1.right_stick_x;
         slide = .75*gamepad2.left_stick_y;
-        linear = gamepad2.right_stick_y;
+        tower = gamepad2.right_stick_y;
 
 
         // If this is the first loop where there is activity
@@ -140,8 +140,9 @@ public class HestiaTeleOp extends OpMode {
 
 
 
+
         slider.setPower(slide);
-//        linearMotor.setPower(linear);
+        towerLeft.setPower(-tower);
 
         // Code to launch the servo
         if ((gamepad2.dpad_up)) {
@@ -164,14 +165,14 @@ public class HestiaTeleOp extends OpMode {
         }
 
         //Lift up arm
-        if (gamepad2.a){
-            macro(.165);
-        }
-
-        // bring arm back down
-        if (gamepad2.b){
-            macro(0.0020);
-        }
+//        if (gamepad2.a){
+//            macro(.165);
+//        }
+//
+//        // bring arm back down
+//        if (gamepad2.b){
+//            macro(0.0020);
+//        }
 
 
         telemetry.addData("Motor arm ticks: ", towerLeft.getCurrentPosition());
