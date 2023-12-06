@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auton;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 @Autonomous
+@Disabled
 public class AutonTemplate extends LinearOpMode {
 
     private TfodProcessor tfodProcessor;
