@@ -20,11 +20,13 @@ public class HestiaTeleOp extends OpMode {
     private DcMotor backRight;
     private DcMotor backLeft;
 
-    private DcMotor towerLeft;
+    private DcMotor towerMotor;
 
     private DcMotor slider;
 
-//    private DcMotor linearMotor;
+    private DcMotor linearTower;
+
+    private DcMotor linearActuator;
 
     private Servo launcher;
 
@@ -47,9 +49,9 @@ public class HestiaTeleOp extends OpMode {
 
     private double slide;
 
-    private double linear;
+    private final double LINEAR_TOWER_TICKS = 537.7;
 
-    private final double towerTicks = 5281.1;
+    private final double LINEAR_ACTUATOR_TICKS = 1425.1;
 
     // This variable will help me determine whether or not to reset the time
     private boolean isFirstLoop = true;
@@ -65,17 +67,21 @@ public class HestiaTeleOp extends OpMode {
         backLeft = hardwareMap.dcMotor.get("backLeft");
         backRight = hardwareMap.dcMotor.get("backRight");
 
-        towerLeft = hardwareMap.dcMotor.get("towerLeft");
+        towerMotor = hardwareMap.dcMotor.get("tower");
+        linearActuator = hardwareMap.dcMotor.get("linearActuator");
+        linearTower = hardwareMap.dcMotor.get("linearTower");
         slider = hardwareMap.dcMotor.get("slider");
 
-        launcher = hardwareMap.servo.get("launcher");
+//        launcher = hardwareMap.servo.get("launcher");
         claw = hardwareMap.servo.get("claw");
 
-        towerLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        towerLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        towerLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        towerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        towerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        towerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-//        linearMotor = hardwareMap.dcMotor.get("linearMotor");
+        linearActuator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
 
         // Hardware mapping of the driver and setting the default pattern
 //        lights = hardwareMap.get(RevBlinkinLedDriver.class,"lights");
@@ -91,7 +97,7 @@ public class HestiaTeleOp extends OpMode {
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        launcher.setPosition(.27);
+//        launcher.setPosition(.27);
 
 
         timer.reset();
@@ -138,21 +144,19 @@ public class HestiaTeleOp extends OpMode {
         backLeft.setPower(forward + strafe - turn);
 
 
-
-
-
         slider.setPower(slide);
-        towerLeft.setPower(-tower);
+        towerMotor.setPower(-tower);
+        linearTower.setPower(.25*(-gamepad2.right_trigger + gamepad2.left_trigger));
 
-        // Code to launch the servo
-        if ((gamepad2.dpad_up)) {
-            launcher.setPosition(.27);
-        }
-
-        // Code to reset the servo
-        if (gamepad2.dpad_down) {
-            launcher.setPosition(1);
-        }
+//        // Code to launch the servo
+//        if ((gamepad2.dpad_up)) {
+//            launcher.setPosition(.27);
+//        }
+//
+//        // Code to reset the servo
+//        if (gamepad2.dpad_down) {
+//            launcher.setPosition(1);
+//        }
 
         // Open claw
         if (gamepad2.left_bumper) {
@@ -164,28 +168,26 @@ public class HestiaTeleOp extends OpMode {
             claw.setPosition(.42);
         }
 
-        //Lift up arm
-//        if (gamepad2.a){
-//            macro(.165);
-//        }
-//
-//        // bring arm back down
-//        if (gamepad2.b){
-//            macro(0.0020);
-//        }
+        if (gamepad2.y){
+            macro(9, linearActuator, LINEAR_ACTUATOR_TICKS);
+        }
 
+        if (gamepad2.a){
+            macro(2, linearActuator, LINEAR_ACTUATOR_TICKS);
+        }
 
-        telemetry.addData("Motor arm ticks: ", towerLeft.getCurrentPosition());
-
+        if (gamepad2.b){
+            macro(0, linearActuator, LINEAR_ACTUATOR_TICKS);
+        }
 
     }
 
-    public void macro(double turnage){
-        double towerTarget = turnage*towerTicks;
+    public void macro(double turnage, DcMotor motor, double ticks){
+        double towerTarget = turnage*ticks;
 
-        towerLeft.setTargetPosition((int)(towerTarget));
-        towerLeft.setPower(1);
-        towerLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setTargetPosition((int)(towerTarget));
+        motor.setPower(1);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     }
 }

@@ -19,6 +19,9 @@ public class MeepMeepTesting {
                                 .turn(Math.toRadians(-90))
                                 .strafeRight(25)
                                 .splineToConstantHeading(new Vector2d(45, -34), Math.toRadians(-90))
+                                .addTemporalMarker(4.5, () ->{
+                                    // stuff happens here
+                                })
                                 .splineTo(new Vector2d(56, -60), 0)
                                 .build()
                 );
