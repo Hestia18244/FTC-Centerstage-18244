@@ -169,7 +169,7 @@ public class HestiaTeleOp extends OpMode {
         }
 
         if (gamepad2.y){
-            macro(9, linearActuator, LINEAR_ACTUATOR_TICKS);
+            macro(22, linearActuator, LINEAR_ACTUATOR_TICKS);
         }
 
         if (gamepad2.a){
