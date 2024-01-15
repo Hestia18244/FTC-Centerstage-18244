@@ -100,7 +100,7 @@ public class AutonRed extends LinearOpMode {
 
         // If the confidence of our detection is low, that must mean we only have one (inaccurate) detection
         // This means that our object is on the side where our camera is not
-        if (confidence < .9 || horizontalPos == -100000){
+        if (confidence < .8 || horizontalPos == -100000){
 
             // TODO: test this code and adjust these values
             // do something if object on left is detected
@@ -109,28 +109,28 @@ public class AutonRed extends LinearOpMode {
             move(-1200, 0, 0, 1, 500);
 
             // Turn towards the proper spike
-            move(0,0,-950, 1, 500);
+            move(0,0,-875, 1, 500);
 
-            move(-200, 0, 0, 1, 500);
+
 
             // Move forward and drop our pixel
-
+            move(100, 0, 0, 1, 500);
             claw.setPosition(.72);
             sleep(500);
 
             // Basically the inverse of all our movements to move back to beginning
 
-            move(300, 0, 0, 1, 500);
-            move(0, 0, 950, 1, 500);
+            move(250, 0, 0, 1, 500);
+            move(0, 0, 875, 1, 500);
 
-            move(1200, 0, 0, 1, 500);
+            move(1100, 0, 0, 1, 500);
 
             // Move to the backstage to park
-            move(0, 1900, 0, 1, 500);
+            move(0, 2000, 0, 1, 500);
         }
         // If we have two recognitions, it means our object is in the center,
         // as the second detection is likely the tape
-        else if (horizontalPos < threshold){
+        else if (horizontalPos < threshold || numRecognitions == 2){
             // TODO: take the values from here and paste them into other files
             // do something if object is in the center
 
@@ -140,10 +140,10 @@ public class AutonRed extends LinearOpMode {
             sleep(500);
 
             // Move back to the starting position
-            move(1200, 0, 0,1, 500);
+            move(1100, 0, 0,1, 500);
 
             // Move to the backstage
-            move(0, 2100, 0, 1, 1000);
+            move(0, 2200, 0, 1, 1000);
         }
         // Otherwise, if there is only one detection, our object must be on the right
         else if (horizontalPos > threshold) {
@@ -151,7 +151,7 @@ public class AutonRed extends LinearOpMode {
             // do something if object is on the right
 
             // Strafe towards the spike
-            move(0,425,0, 1, 500);
+            move(0,550,0, 1, 500);
 
             // Move forward to the spike and place the pixel
             move(-900, 0, 0, 1, 500);
@@ -159,10 +159,10 @@ public class AutonRed extends LinearOpMode {
             sleep(500);
 
             // move backwards to align with the wall
-            move(900, 0, 0, 1, 500);
+            move(775, 0, 0, 1, 500);
 
             // Strafe towards the backstage
-            move(0, 1225, 0, 1, 1000);
+            move(0, 1275, 0, 1, 1000);
         }
 
 //        move(0, 2100, 0, 1, 1000);

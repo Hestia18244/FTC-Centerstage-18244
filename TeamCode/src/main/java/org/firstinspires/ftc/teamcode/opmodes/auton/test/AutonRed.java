@@ -19,7 +19,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 
-
+//@Autonomous
 public class AutonRed extends LinearOpMode {
     // List of servos
     private Servo claw;
@@ -67,7 +67,7 @@ public class AutonRed extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         claw = hardwareMap.servo.get("claw");
 
-
+        drive.setPoseEstimate(new Pose2d(12, -60, Math.toRadians(90)));
 
         // Setting the claw to an initial position
         claw.setPosition(.42);
@@ -88,44 +88,42 @@ public class AutonRed extends LinearOpMode {
         // Because of this, we are able use the position of the object for our logic
 
         // If no object is detected, then we assume its the object on the left
-        if (horizontalPos == -100000 || confidence < .9){
+        if (horizontalPos == -100000 || confidence < .8){
 
 
             TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(12, -60, Math.toRadians(90)))
                     // Drive forward into the tile with all of the spikes
                     .forward(26)
 
-                    // Turn towards the left spike
-                    .turn(Math.toRadians(-90))
-
-                    // Drive forward to the left spike
-                    .forward(7)
                     .waitSeconds(1)
-
                     // Open the claw
                     .addDisplacementMarker(()->{
                         claw.setPosition(0.72);
                     })
 
-                    // Drive back into the tile with all of the spikes
+
                     .waitSeconds(1)
-                    .back(7)
+
+                    // Turn towards the left spike
+                    .turn(Math.toRadians(80))
+
+
 
                     // Turn to face forward again
-                    .turn(Math.toRadians(90))
+                    .turn(Math.toRadians(-80))
 
                     // back up from the tile with all of the spikes
                     .back(18)
 
                     // Strafe to the exact coordinates of the parking spot
-                    .strafeTo(new Vector2d(56, -60))
+                    .strafeTo(new Vector2d(50, -55))
                     .build();
 
             // Follow the trajectory we created above
             drive.followTrajectorySequence(trajectory);
         }
         // if our object is on the left side of our threshold, then our object is in the center
-        else if (horizontalPos < THRESHOLD){
+        else if (horizontalPos < THRESHOLD || numRecognitions == 2){
 
             TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(12, -60, Math.toRadians(90)))
                     // Drive forward to the spike in the middle
@@ -143,7 +141,7 @@ public class AutonRed extends LinearOpMode {
                     .back(15)
 
                     // Strafe to the exact coordinates of the parking space
-                    .strafeTo(new Vector2d(56, -60))
+                    .strafeTo(new Vector2d(50, -55))
                     .build();
 
             // Follow the trajectory we above
@@ -162,11 +160,6 @@ public class AutonRed extends LinearOpMode {
                     // Drive forward into the tile with all of the spikes
                     .forward(26)
 
-                    // Turn towards the right spike
-                    .turn(Math.toRadians(90))
-
-                    // move forwards towards the right spike
-                    .forward(7)
                     .waitSeconds(1)
 
                     // open the claw above the right spike
@@ -174,18 +167,19 @@ public class AutonRed extends LinearOpMode {
                         claw.setPosition(.72);
                     })
 
-                    // back up into the tile with all of the spikes
                     .waitSeconds(1)
-                    .back(7)
+                    // Turn towards the right spike
+                    .turn(Math.toRadians(-80))
+
 
                     // Turn to face forwards
-                    .turn(Math.toRadians(-90))
+                    .turn(Math.toRadians(80))
 
                     // Drive backwards away from the tile with all of the spikes
                     .back(18)
 
                     // Strafe to the exact location
-                    .strafeTo(new Vector2d(56, -60))
+                    .strafeTo(new Vector2d(50, -55))
                     .build();
 
 
@@ -216,7 +210,7 @@ public class AutonRed extends LinearOpMode {
                 // Use setModelAssetName() if the TF Model is built in as an asset.
                 // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
                 //.setModelAssetName(TFOD_MODEL_ASSET)
-                .setModelFileName("blue.tflite")
+                .setModelFileName("red.tflite")
 
                 .setMaxNumRecognitions(1)
                 .setTrackerMaxOverlap(0.25f)

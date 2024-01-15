@@ -19,7 +19,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 
-
+//@Autonomous
 public class AutonRedFar extends LinearOpMode {
 
     // List of servos
@@ -68,7 +68,7 @@ public class AutonRedFar extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         claw = hardwareMap.servo.get("claw");
 
-
+        drive.setPoseEstimate(new Pose2d(-34, 60, Math.toRadians(90)));
 
         // Setting the claw to an initial position
         claw.setPosition(.42);
@@ -98,10 +98,8 @@ public class AutonRedFar extends LinearOpMode {
                     .forward(26)
 
                     // Turn towards the spike on the left
-                    .turn(Math.toRadians(90))
+                    .turn(Math.toRadians(80))
 
-                    // move forward to place the pixel on the spike
-                    .forward(7)
 
                     // Wait for a second before placing the pixel
                     .waitSeconds(1)
@@ -147,10 +145,8 @@ public class AutonRedFar extends LinearOpMode {
                     .forward(26)
 
                     // Turn towards the right spike
-                    .turn(Math.toRadians(-90))
+                    .turn(Math.toRadians(-80))
 
-                    // Move forward to the right spike
-                    .forward(7)
                     .waitSeconds(1)
 
                     // Place the pixel on the spike
@@ -186,7 +182,7 @@ public class AutonRedFar extends LinearOpMode {
                 // Use setModelAssetName() if the TF Model is built in as an asset.
                 // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
                 //.setModelAssetName(TFOD_MODEL_ASSET)
-                .setModelFileName("blue.tflite")
+                .setModelFileName("red.tflite")
 
                 .setMaxNumRecognitions(1)
                 .setTrackerMaxOverlap(0.25f)

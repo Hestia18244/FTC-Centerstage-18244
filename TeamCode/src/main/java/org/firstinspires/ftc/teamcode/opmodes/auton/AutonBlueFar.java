@@ -99,7 +99,7 @@ public class AutonBlueFar extends LinearOpMode {
         // Because of this, we are able use the position of the object for our logic
 
         // If no object is detected, then we assume its the object on the left
-        if (horizontalPos == -100000 || confidence < .9){
+        if (horizontalPos == -100000 || confidence < .8){
 
             // TODO: test this code and adjust these values
             // do something if object on left is detected
@@ -110,14 +110,11 @@ public class AutonBlueFar extends LinearOpMode {
             // Turn towards the spike on the left
             move(0,0,-950, 1, 500);
 
-            // Move forwards toward the spike and place the object
-            move(-200, 0, 0, 1, 500);
+
             claw.setPosition(.72);
             sleep(500);
 
-            // Move back and turn so that we are facing forward within the tile with all the spikes
-            move(300, 0, 0, 1, 500);
-            move(0, 0, 950, 1, 500);
+
 
 
 
@@ -131,12 +128,11 @@ public class AutonBlueFar extends LinearOpMode {
             // do something if object is in the center
 
             // Move forward into the tile with all of the spikes and place the pixel
-            move(-1250, 0, 0, 1, 500);
+            move(-1200, 0, 0, 1, 500);
             claw.setPosition(.72);
             sleep(500);
 
-            // Strafe right to avoid running over the pixel when moving forward
-            move(0, 800, 0, 1, 500);
+
 
 
 
@@ -154,14 +150,11 @@ public class AutonBlueFar extends LinearOpMode {
             // Turn towards the spike on the right
             move(0,0,950, 1, 500);
 
-            // Move forwards towards the right spike and place the pixel
-            move(-200, 0, 0, 1, 500);
+
             claw.setPosition(.72);
             sleep(500);
 
-            // Move back and turn so that we are facing forward within the tile with all of the spikes
-            move(250, 0,0, 1, 500);
-            move(0, 0, -950, 1, 500);
+
 
 
         }
@@ -173,7 +166,7 @@ public class AutonBlueFar extends LinearOpMode {
 //        move(0, -1000, 0, 1, 1000);
 //        move(0, 0, -1000,1, 1000);
 
-        claw.setPosition(.72);
+
 
 
         sleep(29000);

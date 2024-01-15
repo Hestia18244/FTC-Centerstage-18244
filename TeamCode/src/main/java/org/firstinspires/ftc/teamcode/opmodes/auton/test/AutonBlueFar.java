@@ -19,7 +19,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 
-
+//@Autonomous
 public class AutonBlueFar extends LinearOpMode {
 
     // List of servos
@@ -68,7 +68,7 @@ public class AutonBlueFar extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         claw = hardwareMap.servo.get("claw");
 
-
+        drive.setPoseEstimate(new Pose2d(-34, 60, Math.toRadians(270)));
 
         // Setting the claw to an initial position
         claw.setPosition(.42);
@@ -91,6 +91,7 @@ public class AutonBlueFar extends LinearOpMode {
         // If no object is detected, then we assume its the object on the left
         if (horizontalPos == -100000 || confidence < .9){
 
+
             // This is our trajectory sequence the robot will follow.
             TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(-34, 60, Math.toRadians(270)))
 
@@ -98,10 +99,7 @@ public class AutonBlueFar extends LinearOpMode {
                     .forward(26)
 
                     // Turn towards the spike on the left
-                    .turn(Math.toRadians(90))
-
-                    // move forward to place the pixel on the spike
-                    .forward(7)
+                    .turn(Math.toRadians(80))
 
                     // Wait for a second before placing the pixel
                     .waitSeconds(1)
@@ -118,6 +116,7 @@ public class AutonBlueFar extends LinearOpMode {
         }
         // if our object is on the left side of our threshold, then our object is in the center
         else if (horizontalPos < THRESHOLD){
+
 
             TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(-34, 60, Math.toRadians(270)))
 
@@ -146,10 +145,9 @@ public class AutonBlueFar extends LinearOpMode {
                     .forward(26)
 
                     // Turn towards the spike on the right
-                    .turn(Math.toRadians(-90))
+                    .turn(Math.toRadians(-80))
 
-                    // Move forwards to the spike
-                    .forward(7)
+
                     .waitSeconds(1)
 
                     // Open the servo above the spike

@@ -19,7 +19,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 
-
+//@Autonomous
 public class AutonBlue extends LinearOpMode {
 
     // List of servos
@@ -68,7 +68,7 @@ public class AutonBlue extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         claw = hardwareMap.servo.get("claw");
 
-
+        drive.setPoseEstimate(new Pose2d(12, 60, Math.toRadians(270)));
 
         // Setting the claw to an initial position
         claw.setPosition(.42);
@@ -98,10 +98,8 @@ public class AutonBlue extends LinearOpMode {
                     .forward(26)
 
                     // Turn towards the spike on the left
-                    .turn(Math.toRadians(90))
+                    .turn(Math.toRadians(80))
 
-                    // move forward to place the pixel on the spike
-                    .forward(7)
 
                     // Wait for a second before placing the pixel
                     .waitSeconds(1)
@@ -114,17 +112,14 @@ public class AutonBlue extends LinearOpMode {
                     // wait for 1 second after
                     .waitSeconds(1)
 
-                    // Move back to the tile with all of the spikes
-                    .back(7)
-
                     // Turn to face forward again
-                    .turn(Math.toRadians(-90))
+                    .turn(Math.toRadians(-80))
 
                     // Move backwards away from the tile with all of the spikes
                     .back(18)
 
                     // Strafe to the exact coordinates of the parking tile
-                    .strafeTo(new Vector2d(56, 60))
+                    .strafeTo(new Vector2d(56, 55))
                     .build();
 
             // Follow the trajectory we made above
@@ -148,7 +143,7 @@ public class AutonBlue extends LinearOpMode {
                     .back(15)
 
                     // Strafe to the exact parking coordinates
-                    .strafeTo(new Vector2d(56, 60))
+                    .strafeTo(new Vector2d(56, 55))
                     .build();
 
             // Follow the trajectory we made above
@@ -166,10 +161,8 @@ public class AutonBlue extends LinearOpMode {
                     .forward(26)
 
                     // Turn towards the spike on the right
-                    .turn(Math.toRadians(-90))
+                    .turn(Math.toRadians(-80))
 
-                    // Drive forwards towards the spike on the right
-                    .forward(7)
                     .waitSeconds(1)
 
                     // Open the servo above the right spike
@@ -178,9 +171,6 @@ public class AutonBlue extends LinearOpMode {
                     })
                     .waitSeconds(1)
 
-                    // Back away from the right spike
-                    .back(7)
-
                     // Turn to face forwards again
                     .turn(Math.toRadians(90))
 
@@ -188,7 +178,7 @@ public class AutonBlue extends LinearOpMode {
                     .back(18)
 
                     // Strafe to the exact parking coordinates
-                    .strafeTo(new Vector2d(56, 60))
+                    .strafeTo(new Vector2d(56, 55))
                     .build();
 
             // Follow our trajectory sequence we made above

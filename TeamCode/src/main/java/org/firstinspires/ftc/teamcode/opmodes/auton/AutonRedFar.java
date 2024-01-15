@@ -100,31 +100,29 @@ public class AutonRedFar extends LinearOpMode {
 
         // If the confidence of our detection is low, that must mean we only have one (inaccurate) detection
         // This means that our object is on the side where our camera is not
-        if (confidence < .85||horizontalPos == -100000){
+        if (confidence < .8||horizontalPos == -100000){
 
             // TODO: Only unchanged one left
             // do something if object on left is detected
 
             // Move forward into the tile with all of the spikes
-            move(-1050, 0, 0, 1, 500);
+            move(-1200, 0, 0, 1, 500);
 
             // Turn towards the spike on the left
-            move(0,0,-950, 1, 500);
+            move(0,0,-875, 1, 500);
 
-            // Move forwards towards the right spike and place the pixel
-            move(-150, 0, 0,1, 500);
+
+            move(-100, 0, 0, 1, 500);
             claw.setPosition(.72);
             sleep(500);
 
-            // Move back and turn so that we are facing forward within the tile with all of the spikes
-            move(250, 0,0, 1, 500);
-            move(0, 0, 950, 1, 500);
+
 
 
         }
         // If we have two recognitions, it means our object is in the center,
         // as the second detection is likely the tape
-        else if (horizontalPos < threshold){
+        else if (horizontalPos < threshold || numRecognitions == 2){
             // TODO: take the values from here and paste them into other files
             // do something if object is in the center
 
@@ -144,16 +142,14 @@ public class AutonRedFar extends LinearOpMode {
             move(-1050, 0, 0 , 1, 500);
 
             // Turn towards the spike on the right
-            move(0,0,800, 1, 500);
+            move(0,0,850, 1, 500);
 
             // Move forwards toward the spike and place the object
 
             claw.setPosition(.72);
             sleep(500);
 
-            // Move back and turn so that we are facing forward within the tile with all the spikes
-            move(300, 0, 0, 1, 500);
-            move(0, 0, -800, 1, 500);
+
 
 
         }

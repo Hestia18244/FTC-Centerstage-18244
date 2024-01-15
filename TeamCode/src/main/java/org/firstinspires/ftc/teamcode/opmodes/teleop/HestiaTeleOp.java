@@ -24,9 +24,9 @@ public class HestiaTeleOp extends OpMode {
 
     private DcMotor slider;
 
-    private DcMotor linearTower;
+    private DcMotor hangingRight;
 
-    private DcMotor linearActuator;
+    private DcMotor hangingLeft;
 
     private Servo launcher;
 
@@ -68,18 +68,18 @@ public class HestiaTeleOp extends OpMode {
         backRight = hardwareMap.dcMotor.get("backRight");
 
         towerMotor = hardwareMap.dcMotor.get("tower");
-        linearActuator = hardwareMap.dcMotor.get("linearActuator");
-        linearTower = hardwareMap.dcMotor.get("linearTower");
+//        hangingLeft = hardwareMap.dcMotor.get("hangingLeft");
+//        hangingRight = hardwareMap.dcMotor.get("hangingTower");
         slider = hardwareMap.dcMotor.get("slider");
 
-//        launcher = hardwareMap.servo.get("launcher");
+        launcher = hardwareMap.servo.get("launcher");
         claw = hardwareMap.servo.get("claw");
 
         towerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         towerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         towerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        linearActuator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
 
 
@@ -115,7 +115,7 @@ public class HestiaTeleOp extends OpMode {
         strafe = gamepad1.left_stick_x;
         turn = .75*gamepad1.right_stick_x;
         slide = .75*gamepad2.left_stick_y;
-        tower = gamepad2.right_stick_y;
+        tower = .75*gamepad2.right_stick_y;
 
 
         // If this is the first loop where there is activity
@@ -137,6 +137,31 @@ public class HestiaTeleOp extends OpMode {
 //            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_2_SPARKLE_1_ON_2);
 //        }
 
+        // These if statements are to change our robot's acceleration from linear to exponential
+
+        // If our variable for forward is negative
+        if (forward < 0){
+
+            // square the variable and then make it negative because the output of x^2 is always positive
+            forward = -(Math.pow(forward, 2));
+        // Otherwise
+        } else {
+            // Square our variable and keep it positive
+            forward = Math.pow(forward, 2);
+        }
+
+        if (strafe < 0){
+            strafe = -(Math.pow(strafe, 2));
+        } else {
+            strafe = Math.pow(strafe, 2);
+        }
+
+        if (turn < 0){
+            turn = -(Math.pow(turn, 2));
+        } else {
+            turn = Math.pow(turn, 2);
+        }
+
         // Sets the power of our motors to our variables we created earlier
         frontRight.setPower(forward + strafe + turn);
         frontLeft.setPower(forward - strafe - turn);
@@ -146,17 +171,17 @@ public class HestiaTeleOp extends OpMode {
 
         slider.setPower(slide);
         towerMotor.setPower(-tower);
-        linearTower.setPower(.25*(-gamepad2.right_trigger + gamepad2.left_trigger));
+//        hangingRight.setPower((-gamepad2.right_trigger + gamepad2.left_trigger));
 
-//        // Code to launch the servo
-//        if ((gamepad2.dpad_up)) {
-//            launcher.setPosition(.27);
-//        }
-//
-//        // Code to reset the servo
-//        if (gamepad2.dpad_down) {
-//            launcher.setPosition(1);
-//        }
+        // Code to launch the servo
+        if ((gamepad2.dpad_up)) {
+            launcher.setPosition(0);
+        }
+
+        // Code to reset the servo
+        if (gamepad2.dpad_down) {
+            launcher.setPosition(1);
+        }
 
         // Open claw
         if (gamepad2.left_bumper) {
@@ -168,17 +193,17 @@ public class HestiaTeleOp extends OpMode {
             claw.setPosition(.42);
         }
 
-        if (gamepad2.y){
-            macro(22, linearActuator, LINEAR_ACTUATOR_TICKS);
-        }
-
-        if (gamepad2.a){
-            macro(2, linearActuator, LINEAR_ACTUATOR_TICKS);
-        }
-
-        if (gamepad2.b){
-            macro(0, linearActuator, LINEAR_ACTUATOR_TICKS);
-        }
+//        if (gamepad2.y){
+//            macro(22, linearActuator, LINEAR_ACTUATOR_TICKS);
+//        }
+//
+//        if (gamepad2.a){
+//            macro(2, linearActuator, LINEAR_ACTUATOR_TICKS);
+//        }
+//
+//        if (gamepad2.b){
+//            macro(0, linearActuator, LINEAR_ACTUATOR_TICKS);
+//        }
 
     }
 

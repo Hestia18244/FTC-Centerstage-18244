@@ -99,13 +99,13 @@ public class AutonBlue extends LinearOpMode {
         // Because of this, we are able use the position of the object for our logic
 
         // If no object is detected, then we assume its the object on the left
-        if (horizontalPos == -100000 || confidence < .9){
+        if (horizontalPos == -100000 || confidence < .8){
 
             // TODO: test this code and adjust these values
             // do something if object on left is detected
 
             // Strafe towards the spike
-            move(0,-850,0, 1, 500);
+            move(0,-550,0, 1, 500);
 
             // Move forward to the spike and place the pixel
             move(-900, 0, 0, 1, 500);
@@ -113,10 +113,10 @@ public class AutonBlue extends LinearOpMode {
             sleep(500);
 
             // move backwards to align with the wall
-            move(900, 0, 0, 1, 500);
+            move(775, 0, 0, 1, 500);
 
             // Strafe towards the backstage
-            move(0, -1300, 0, 1, 1000);
+            move(0, -1275, 0, 1, 1000);
         }
         // if our object is on the left side of our threshold, then our object is in the center
         else if (horizontalPos < THRESHOLD){
@@ -124,15 +124,15 @@ public class AutonBlue extends LinearOpMode {
             // do something if object is in the center
 
             // Move forward and place the object on the spike
-            move(-1250, 0, 0, 1, 500);
+            move(-1200, 0, 0, 1, 500);
             claw.setPosition(.72);
             sleep(500);
 
             // Move back to the starting position
-            move(1250, 0, 0,1, 500);
+            move(1100, 0, 0,1, 500);
 
             // Move to the backstage
-            move(0, -2100, 0, 1, 1000);
+            move(0, -2200, 0, 1, 1000);
         }
         // Otherwise, if our object is on the right side of our threshold, then it must be on the right spike
         else if (horizontalPos > THRESHOLD) {
@@ -143,22 +143,22 @@ public class AutonBlue extends LinearOpMode {
             move(-1200, 0, 0, 1, 500);
 
             // Turn towards the proper spike
-            move(0,0,950, 1, 500);
+            move(0,0,875, 1, 500);
 
             // Move forward and drop our pixel
-
+            move(100, 0,0, 1, 500);
             claw.setPosition(.72);
             sleep(500);
 
             // Basically the inverse of all our movements to move back to beginning
 
             move(300, 0, 0, 1, 500);
-            move(0, 0, -950, 1, 500);
+            move(0, 0, -875, 1, 500);
 
-            move(1200, 0, 0, 1, 500);
+            move(1100, 0, 0, 1, 500);
 
             // Move to the backstage to park
-            move(0, -1900, 0, 1, 500);
+            move(0, -2000, 0, 1, 500);
 
         }
 
