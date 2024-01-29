@@ -68,8 +68,8 @@ public class HestiaTeleOp extends OpMode {
         backRight = hardwareMap.dcMotor.get("backRight");
 
         towerMotor = hardwareMap.dcMotor.get("tower");
-//        hangingLeft = hardwareMap.dcMotor.get("hangingLeft");
-//        hangingRight = hardwareMap.dcMotor.get("hangingTower");
+        hangingLeft = hardwareMap.dcMotor.get("hangingLeft");
+        hangingRight = hardwareMap.dcMotor.get("hangingRight");
         slider = hardwareMap.dcMotor.get("slider");
 
         launcher = hardwareMap.servo.get("launcher");
@@ -78,9 +78,10 @@ public class HestiaTeleOp extends OpMode {
         towerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         towerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         towerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hangingLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-
+        launcher.setPosition(0);
 
 
         // Hardware mapping of the driver and setting the default pattern
@@ -111,11 +112,11 @@ public class HestiaTeleOp extends OpMode {
 
 
         // At the start of the loop, take the values of the joystick and set them to our variables
-        forward = gamepad1.left_stick_y;
-        strafe = gamepad1.left_stick_x;
-        turn = .75*gamepad1.right_stick_x;
-        slide = .75*gamepad2.left_stick_y;
-        tower = .75*gamepad2.right_stick_y;
+        forward = Math.pow(gamepad1.left_stick_y, 2) * Math.signum(gamepad1.left_stick_y);
+        strafe = Math.pow(gamepad1.left_stick_x, 2) * Math.signum(gamepad1.left_stick_x);
+        turn = .75 * (Math.pow(gamepad1.right_stick_x, 2) * Math.signum(gamepad1.right_stick_x));
+        slide = .75 * gamepad2.left_stick_y;
+        tower = .75 * gamepad2.right_stick_y;
 
 
         // If this is the first loop where there is activity
@@ -137,30 +138,6 @@ public class HestiaTeleOp extends OpMode {
 //            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_2_SPARKLE_1_ON_2);
 //        }
 
-        // These if statements are to change our robot's acceleration from linear to exponential
-
-        // If our variable for forward is negative
-        if (forward < 0){
-
-            // square the variable and then make it negative because the output of x^2 is always positive
-            forward = -(Math.pow(forward, 2));
-        // Otherwise
-        } else {
-            // Square our variable and keep it positive
-            forward = Math.pow(forward, 2);
-        }
-
-        if (strafe < 0){
-            strafe = -(Math.pow(strafe, 2));
-        } else {
-            strafe = Math.pow(strafe, 2);
-        }
-
-        if (turn < 0){
-            turn = -(Math.pow(turn, 2));
-        } else {
-            turn = Math.pow(turn, 2);
-        }
 
         // Sets the power of our motors to our variables we created earlier
         frontRight.setPower(forward + strafe + turn);
@@ -171,7 +148,8 @@ public class HestiaTeleOp extends OpMode {
 
         slider.setPower(slide);
         towerMotor.setPower(-tower);
-//        hangingRight.setPower((-gamepad2.right_trigger + gamepad2.left_trigger));
+        hangingRight.setPower((-gamepad2.right_trigger + gamepad2.left_trigger));
+        hangingLeft.setPower((-gamepad2.right_trigger + gamepad2.left_trigger));
 
         // Code to launch the servo
         if ((gamepad2.dpad_up)) {

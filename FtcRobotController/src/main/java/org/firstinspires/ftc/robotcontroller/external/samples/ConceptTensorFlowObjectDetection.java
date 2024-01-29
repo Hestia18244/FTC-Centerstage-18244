@@ -62,7 +62,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
-    private static final String[] LABELS = {"Prop"};
+    private static final String[] LABELS = {"red"};
     @Override
     public void runOpMode() {
 
@@ -110,7 +110,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
             // Use setModelAssetName() if the TF Model is built in as an asset.
             // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
             //.setModelAssetName(TFOD_MODEL_ASSET)
-            .setModelFileName("blue.tflite")
+            .setModelFileName("dino.tflite")
 
                 .setMaxNumRecognitions(1)
                 .setTrackerMaxOverlap(0.25f)

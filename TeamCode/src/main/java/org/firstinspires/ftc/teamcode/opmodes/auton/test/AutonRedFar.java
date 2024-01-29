@@ -19,11 +19,13 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 
-//@Autonomous
+@Autonomous
 public class AutonRedFar extends LinearOpMode {
 
     // List of servos
     private Servo claw;
+
+    private Servo launcher;
 
     /**
      * The position of our object
@@ -67,8 +69,10 @@ public class AutonRedFar extends LinearOpMode {
         // Hardware mapping of our motors and servos
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         claw = hardwareMap.servo.get("claw");
+        launcher = hardwareMap.servo.get("launcher");
+        launcher.setPosition(0);
 
-        drive.setPoseEstimate(new Pose2d(-34, 60, Math.toRadians(90)));
+        drive.setPoseEstimate(new Pose2d(-34, -60, Math.toRadians(90)));
 
         // Setting the claw to an initial position
         claw.setPosition(.42);
@@ -89,15 +93,15 @@ public class AutonRedFar extends LinearOpMode {
         // Because of this, we are able use the position of the object for our logic
 
         // If no object is detected, then we assume its the object on the left
-        if (horizontalPos == -100000 || confidence < .9){
+        if (horizontalPos == -100000 || confidence < .85){
 
             // This is our trajectory sequence the robot will follow.
             TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(-34, -60, Math.toRadians(90)))
 
-                    // Move forward to the tile with all of the spikes
+
+
                     .forward(26)
 
-                    // Turn towards the spike on the left
                     .turn(Math.toRadians(80))
 
 
@@ -105,7 +109,7 @@ public class AutonRedFar extends LinearOpMode {
                     .waitSeconds(1)
 
                     // Displacement marker to open the servo above the spike
-                    .addDisplacementMarker(()->{
+                    .addTemporalMarker(4,()->{
                         claw.setPosition(.72);
                     })
 
@@ -115,16 +119,17 @@ public class AutonRedFar extends LinearOpMode {
             drive.followTrajectorySequence(trajectory);
         }
         // if our object is on the left side of our threshold, then our object is in the center
-        else if (horizontalPos < THRESHOLD){
+        else if (horizontalPos < THRESHOLD || numRecognitions == 2){
 
             TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(-34, -60, Math.toRadians(90)))
 
                     // Move forwards toward the middle spike
-                    .forward(28)
+                    .forward(30)
+                    .back(2)
                     .waitSeconds(1)
 
                     // Open the servo above the spike
-                    .addDisplacementMarker(()->{
+                    .addTemporalMarker(2.5,()->{
                         claw.setPosition(.72);
                     })
                     .build();
@@ -150,7 +155,7 @@ public class AutonRedFar extends LinearOpMode {
                     .waitSeconds(1)
 
                     // Place the pixel on the spike
-                    .addDisplacementMarker(()->{
+                    .addTemporalMarker(4, ()->{
                         claw.setPosition(0.72);
                     })
                     .build();
@@ -225,7 +230,7 @@ public class AutonRedFar extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        //tfod.setMinResultConfidence(0.75f);
+        tfod.setMinResultConfidence(0.8f);
 
         // Disable or re-enable the TFOD processor at any time.
         //visionPortal.setProcessorEnabled(tfod, true);

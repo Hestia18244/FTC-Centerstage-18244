@@ -19,11 +19,13 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 
-//@Autonomous
+@Autonomous
 public class AutonBlueFar extends LinearOpMode {
 
     // List of servos
     private Servo claw;
+
+    private Servo launcher;
 
     /**
      * The position of our object
@@ -67,6 +69,8 @@ public class AutonBlueFar extends LinearOpMode {
         // Hardware mapping of our motors and servos
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         claw = hardwareMap.servo.get("claw");
+        launcher = hardwareMap.servo.get("launcher");
+        launcher.setPosition(0);
 
         drive.setPoseEstimate(new Pose2d(-34, 60, Math.toRadians(270)));
 
@@ -89,7 +93,7 @@ public class AutonBlueFar extends LinearOpMode {
         // Because of this, we are able use the position of the object for our logic
 
         // If no object is detected, then we assume its the object on the left
-        if (horizontalPos == -100000 || confidence < .9){
+        if (horizontalPos == -100000 || confidence < .91 || numRecognitions == 2){
 
 
             // This is our trajectory sequence the robot will follow.
@@ -101,11 +105,13 @@ public class AutonBlueFar extends LinearOpMode {
                     // Turn towards the spike on the left
                     .turn(Math.toRadians(80))
 
+                    .forward(3)
+
                     // Wait for a second before placing the pixel
                     .waitSeconds(1)
 
                     // Displacement marker to open the servo above the spike
-                    .addDisplacementMarker(()->{
+                    .addTemporalMarker(4.4,()->{
                         claw.setPosition(.72);
                     })
 
@@ -125,7 +131,7 @@ public class AutonBlueFar extends LinearOpMode {
                     .waitSeconds(1)
 
                     // Place the pixel on the spike in the middle
-                    .addDisplacementMarker(()->{
+                    .addTemporalMarker(2.5,()->{
                         claw.setPosition(.72);
                     })
                     .build();
@@ -151,7 +157,7 @@ public class AutonBlueFar extends LinearOpMode {
                     .waitSeconds(1)
 
                     // Open the servo above the spike
-                    .addDisplacementMarker(()->{
+                    .addTemporalMarker(4,()->{
                         claw.setPosition(0.72);
                     })
                     .build();

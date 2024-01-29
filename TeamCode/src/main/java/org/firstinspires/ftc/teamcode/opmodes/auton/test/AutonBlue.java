@@ -19,11 +19,13 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 
-//@Autonomous
+@Autonomous
 public class AutonBlue extends LinearOpMode {
 
     // List of servos
     private Servo claw;
+
+    private Servo launcher;
 
     /**
      * The position of our object
@@ -67,6 +69,9 @@ public class AutonBlue extends LinearOpMode {
         // Hardware mapping of our motors and servos
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         claw = hardwareMap.servo.get("claw");
+        launcher = hardwareMap.servo.get("launcher");
+
+        launcher.setPosition(0);
 
         drive.setPoseEstimate(new Pose2d(12, 60, Math.toRadians(270)));
 
@@ -95,31 +100,28 @@ public class AutonBlue extends LinearOpMode {
             TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(12, 60, Math.toRadians(270)))
 
                     // Move forward to the tile with all of the spikes
-                    .forward(26)
+                    .strafeLeft(12)
 
-                    // Turn towards the spike on the left
-                    .turn(Math.toRadians(80))
-
+                    .forward(20)
 
                     // Wait for a second before placing the pixel
                     .waitSeconds(1)
 
                     // Displacement marker to open the servo above the spike
-                    .addDisplacementMarker(()->{
+                    .addTemporalMarker(4, ()->{
                         claw.setPosition(.72);
                     })
 
                     // wait for 1 second after
                     .waitSeconds(1)
 
-                    // Turn to face forward again
-                    .turn(Math.toRadians(-80))
+
 
                     // Move backwards away from the tile with all of the spikes
                     .back(18)
 
                     // Strafe to the exact coordinates of the parking tile
-                    .strafeTo(new Vector2d(56, 55))
+                    .strafeTo(new Vector2d(50, 55))
                     .build();
 
             // Follow the trajectory we made above
@@ -130,20 +132,20 @@ public class AutonBlue extends LinearOpMode {
 
             TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(12, 60, Math.toRadians(270)))
                     // Drive forwards towards the middle spike
-                    .forward(28)
+                    .forward(26)
                     .waitSeconds(1)
 
                     // Open the servo above the middle spike
-                    .addDisplacementMarker(()->{
+                    .addTemporalMarker(2.5,()->{
                         claw.setPosition(.72);
                     })
                     .waitSeconds(1)
 
                     // Back up away from the tile with all of the spikes
-                    .back(15)
+                    .back(22)
 
                     // Strafe to the exact parking coordinates
-                    .strafeTo(new Vector2d(56, 55))
+                    .strafeTo(new Vector2d(50, 55))
                     .build();
 
             // Follow the trajectory we made above
@@ -166,19 +168,21 @@ public class AutonBlue extends LinearOpMode {
                     .waitSeconds(1)
 
                     // Open the servo above the right spike
-                    .addDisplacementMarker(()->{
+                    .addTemporalMarker(4,()->{
                         claw.setPosition(0.72);
                     })
                     .waitSeconds(1)
 
+                    .back(4)
+
                     // Turn to face forwards again
-                    .turn(Math.toRadians(90))
+                    .turn(Math.toRadians(80))
 
                     // Back away from the tile with all of the pixels
-                    .back(18)
+                    .back(22)
 
                     // Strafe to the exact parking coordinates
-                    .strafeTo(new Vector2d(56, 55))
+                    .strafeTo(new Vector2d(50, 55))
                     .build();
 
             // Follow our trajectory sequence we made above

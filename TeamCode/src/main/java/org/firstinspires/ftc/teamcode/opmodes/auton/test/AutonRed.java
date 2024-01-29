@@ -19,10 +19,12 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 
-//@Autonomous
+@Autonomous
 public class AutonRed extends LinearOpMode {
     // List of servos
     private Servo claw;
+
+    private Servo launcher;
 
     /**
      * The position of our object
@@ -66,6 +68,9 @@ public class AutonRed extends LinearOpMode {
         // Hardware mapping of our motors and servos
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         claw = hardwareMap.servo.get("claw");
+        launcher = hardwareMap.servo.get("launcher");
+
+        launcher.setPosition(0);
 
         drive.setPoseEstimate(new Pose2d(12, -60, Math.toRadians(90)));
 
@@ -95,25 +100,28 @@ public class AutonRed extends LinearOpMode {
                     // Drive forward into the tile with all of the spikes
                     .forward(26)
 
+
+
+                    // Turn towards the left spike
+                    .turn(Math.toRadians(80))
+
+
                     .waitSeconds(1)
                     // Open the claw
-                    .addDisplacementMarker(()->{
+                    .addTemporalMarker(4,()->{
                         claw.setPosition(0.72);
                     })
 
 
                     .waitSeconds(1)
 
-                    // Turn towards the left spike
-                    .turn(Math.toRadians(80))
-
-
+                    .back(4)
 
                     // Turn to face forward again
                     .turn(Math.toRadians(-80))
 
                     // back up from the tile with all of the spikes
-                    .back(18)
+                    .back(22)
 
                     // Strafe to the exact coordinates of the parking spot
                     .strafeTo(new Vector2d(50, -55))
@@ -138,7 +146,7 @@ public class AutonRed extends LinearOpMode {
 
                     // Drive back away from the tile with all of the spikes
                     .waitSeconds(1)
-                    .back(15)
+                    .back(22)
 
                     // Strafe to the exact coordinates of the parking space
                     .strafeTo(new Vector2d(50, -55))
@@ -158,22 +166,21 @@ public class AutonRed extends LinearOpMode {
             TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(12, -60, Math.toRadians(90)))
 
                     // Drive forward into the tile with all of the spikes
-                    .forward(26)
+                    .strafeRight(10)
+
+                    .forward(20)
+
 
                     .waitSeconds(1)
 
                     // open the claw above the right spike
-                    .addDisplacementMarker(()->{
+                    .addTemporalMarker(4,()->{
                         claw.setPosition(.72);
                     })
 
                     .waitSeconds(1)
-                    // Turn towards the right spike
-                    .turn(Math.toRadians(-80))
 
 
-                    // Turn to face forwards
-                    .turn(Math.toRadians(80))
 
                     // Drive backwards away from the tile with all of the spikes
                     .back(18)

@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.auton;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,32 +11,32 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
 
-@Autonomous
+//@Autonomous
 public class AutonRedFar extends LinearOpMode {
 
-    // List of motors and servos
-    private DcMotor frontRight;
-    private DcMotor frontLeft;
-    private DcMotor backLeft;
-    private DcMotor backRight;
+    // List of servos
     private Servo claw;
+
+    private Servo launcher;
 
     /**
      * The position of our object
      */
-    private double horizontalPos = 154.2;
+    private double horizontalPos = -100000;
 
 
     /**
      * The threshold for our object to either be on the left or the right side
      */
-    private static double threshold = 270;
+    private final double THRESHOLD = 270;
 
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
@@ -64,21 +67,12 @@ public class AutonRedFar extends LinearOpMode {
     public void runOpMode(){
 
         // Hardware mapping of our motors and servos
-        frontRight = hardwareMap.dcMotor.get("frontRight");
-        frontLeft = hardwareMap.dcMotor.get("frontLeft");
-        backLeft = hardwareMap.dcMotor.get("backLeft");
-        backRight = hardwareMap.dcMotor.get("backRight");
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         claw = hardwareMap.servo.get("claw");
+        launcher = hardwareMap.servo.get("launcher");
+        launcher.setPosition(0);
 
-        // Locking of our motors to reduce slip
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // Reversing the direction of our right side motors
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        drive.setPoseEstimate(new Pose2d(-34, -60, Math.toRadians(90)));
 
         // Setting the claw to an initial position
         claw.setPosition(.42);
@@ -94,114 +88,93 @@ public class AutonRedFar extends LinearOpMode {
         // Once the opMode is active, we execute the following code
         waitForStart();
 
-        // Currently, our red model is not so accurate.
-        // It detects the tape as our model and thus, we have to use the confidence of our model
-        // and the number of recognitions to determine where the object is
 
-        // If the confidence of our detection is low, that must mean we only have one (inaccurate) detection
-        // This means that our object is on the side where our camera is not
-        if (confidence < .8||horizontalPos == -100000){
+        // The accuracy of our blue model is much higher than that of our red model
+        // Because of this, we are able use the position of the object for our logic
 
-            // TODO: Only unchanged one left
-            // do something if object on left is detected
+        // If no object is detected, then we assume its the object on the left
+        if (horizontalPos == -100000 || confidence < .85){
 
-            // Move forward into the tile with all of the spikes
-            move(-1200, 0, 0, 1, 500);
-
-            // Turn towards the spike on the left
-            move(0,0,-875, 1, 500);
+            // This is our trajectory sequence the robot will follow.
+            TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(-34, -60, Math.toRadians(90)))
 
 
-            move(-100, 0, 0, 1, 500);
-            claw.setPosition(.72);
-            sleep(500);
 
+                    .forward(26)
+
+                    .turn(Math.toRadians(80))
+
+
+                    // Wait for a second before placing the pixel
+                    .waitSeconds(1)
+
+                    // Displacement marker to open the servo above the spike
+                    .addTemporalMarker(4,()->{
+                        claw.setPosition(.72);
+                    })
+
+                    .build();
+
+            // Follow the trajectory sequence above
+            drive.followTrajectorySequence(trajectory);
+        }
+        // if our object is on the left side of our threshold, then our object is in the center
+        else if (horizontalPos < THRESHOLD || numRecognitions == 2){
+
+            TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(-34, -60, Math.toRadians(90)))
+
+                    // Move forwards toward the middle spike
+                    .forward(30)
+                    .back(2)
+                    .waitSeconds(1)
+
+                    // Open the servo above the spike
+                    .addTemporalMarker(2.5,()->{
+                        claw.setPosition(.72);
+                    })
+                    .build();
+
+
+            // Follow the trajectory sequence above
+            drive.followTrajectorySequence(trajectory);
 
 
 
         }
-        // If we have two recognitions, it means our object is in the center,
-        // as the second detection is likely the tape
-        else if (horizontalPos < threshold || numRecognitions == 2){
-            // TODO: take the values from here and paste them into other files
-            // do something if object is in the center
+        // Otherwise, if our object is on the right side of our threshold, then it must be on the right spike
+        else if (horizontalPos > THRESHOLD) {
 
-            // Move forward into the tile with all of the spikes and place the pixel
-            move(-1200, 0, 0, 1, 500);
-            claw.setPosition(.72);
-            sleep(500);
+            TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(-34, -60, Math.toRadians(90)))
 
+                    // Drive forwards towards the tile with all of the spikes
+                    .forward(26)
 
-        }
-        // Otherwise, if there is only one detection, our object must be on the right
-        else if (horizontalPos > threshold) {
-            // TODO: Test the values here to ensure accuracy
-            // do something if object is on the right
+                    // Turn towards the right spike
+                    .turn(Math.toRadians(-80))
 
-            // Move forward into the tile with all of the spikes
-            move(-1050, 0, 0 , 1, 500);
+                    .waitSeconds(1)
 
-            // Turn towards the spike on the right
-            move(0,0,850, 1, 500);
+                    // Place the pixel on the spike
+                    .addTemporalMarker(4, ()->{
+                        claw.setPosition(0.72);
+                    })
+                    .build();
 
-            // Move forwards toward the spike and place the object
-
-            claw.setPosition(.72);
-            sleep(500);
-
-
+            // Follow the trajectory above
+            drive.followTrajectorySequence(trajectory);
 
 
         }
 
-//        move(-2100, 0, 0, 1, 1000);
-//        move(0,3200,0,1,1000);
-//        move(1200, 0, 0, 1, 1000);
-//        move(0, 1000, 0, 1, 1000);
-//        move(0, 0, 1000,1, 1000);
-//
-//        claw.setPosition(.72);
+
+
+
 
         sleep(29000);
 
     }
 
-    /**
-     * Function that moves our motors using encoders
-     * @param forward How many ticks we want to move forward (0 if we do not want to move forward)
-     * @param strafe How many ticks we want to strafe (0 if we do not want to strafe)
-     * @param turn How many ticks we want to turn (0 if we do not want to turn)
-     * @param power How much power we want the motors to move at
-     * @param ms How much delay we want before our next action in milliseconds
-     */
-    public void move(int forward, int strafe, int turn, double power, int ms){
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        frontLeft.setTargetPosition(forward - strafe - turn);
-        frontRight.setTargetPosition(forward + strafe + turn);
-        backRight.setTargetPosition(forward - strafe + turn);
-        backLeft.setTargetPosition(forward + strafe - turn);
-
-        frontLeft.setPower(power);
-        frontRight.setPower(power);
-        backLeft.setPower(power);
-        backRight.setPower(power);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (frontLeft.isBusy() && frontRight.isBusy() && backRight.isBusy() && backLeft.isBusy()){
-
-        }
-
-        sleep(ms);
-
-    }
 
     /**
      * Function that intializes our tfod processor and VisionPortal with necessary settings
@@ -216,7 +189,7 @@ public class AutonRedFar extends LinearOpMode {
                 //.setModelAssetName(TFOD_MODEL_ASSET)
                 .setModelFileName("red.tflite")
 
-                .setMaxNumRecognitions(2)
+                .setMaxNumRecognitions(1)
                 .setTrackerMaxOverlap(0.25f)
                 .setModelLabels(LABELS)
                 .setNumDetectorThreads(1)
@@ -257,7 +230,7 @@ public class AutonRedFar extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        //tfod.setMinResultConfidence(0.75f);
+        tfod.setMinResultConfidence(0.8f);
 
         // Disable or re-enable the TFOD processor at any time.
         //visionPortal.setProcessorEnabled(tfod, true);
@@ -276,7 +249,7 @@ public class AutonRedFar extends LinearOpMode {
 
         if (currentRecognitions.isEmpty()){
 
-            horizontalPos = 154.2;
+            horizontalPos = -100000;
 
             return false;
         }
@@ -297,5 +270,3 @@ public class AutonRedFar extends LinearOpMode {
 
     }
 }
-
-
