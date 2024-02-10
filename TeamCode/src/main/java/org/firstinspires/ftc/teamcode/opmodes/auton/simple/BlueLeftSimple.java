@@ -1,12 +1,9 @@
-package org.firstinspires.ftc.teamcode.opmodes.auton;
+package org.firstinspires.ftc.teamcode.opmodes.auton.simple;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -19,13 +16,12 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 
-//@Autonomous
-public class AutonRedFar extends LinearOpMode {
+@Autonomous (group = "simple")
+public class BlueLeftSimple extends LinearOpMode {
 
     // List of servos
     private Servo claw;
 
-    private Servo launcher;
 
     /**
      * The position of our object
@@ -69,10 +65,8 @@ public class AutonRedFar extends LinearOpMode {
         // Hardware mapping of our motors and servos
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         claw = hardwareMap.servo.get("claw");
-        launcher = hardwareMap.servo.get("launcher");
-        launcher.setPosition(0);
 
-        drive.setPoseEstimate(new Pose2d(-34, -60, Math.toRadians(90)));
+        drive.setPoseEstimate(new Pose2d(12, 60, Math.toRadians(270)));
 
         // Setting the claw to an initial position
         claw.setPosition(.42);
@@ -93,49 +87,61 @@ public class AutonRedFar extends LinearOpMode {
         // Because of this, we are able use the position of the object for our logic
 
         // If no object is detected, then we assume its the object on the left
-        if (horizontalPos == -100000 || confidence < .85){
+        if (horizontalPos == -100000 || confidence < .9){
 
             // This is our trajectory sequence the robot will follow.
-            TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(-34, -60, Math.toRadians(90)))
+            TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(12, 60, Math.toRadians(270)))
 
+                    // Move forward to the tile with all of the spikes
+                    .strafeLeft(12)
 
-
-                    .forward(26)
-
-                    .turn(Math.toRadians(80))
-
+                    .forward(20)
 
                     // Wait for a second before placing the pixel
                     .waitSeconds(1)
 
                     // Displacement marker to open the servo above the spike
-                    .addTemporalMarker(4,()->{
+                    .addTemporalMarker(4, ()->{
                         claw.setPosition(.72);
                     })
 
+                    // wait for 1 second after
+                    .waitSeconds(1)
+
+
+
+                    // Move backwards away from the tile with all of the spikes
+                    .back(18)
+
+                    // Strafe to the exact coordinates of the parking tile
+                    .strafeTo(new Vector2d(50, 55))
                     .build();
 
-            // Follow the trajectory sequence above
+            // Follow the trajectory we made above
             drive.followTrajectorySequence(trajectory);
         }
         // if our object is on the left side of our threshold, then our object is in the center
-        else if (horizontalPos < THRESHOLD || numRecognitions == 2){
+        else if (horizontalPos < THRESHOLD){
 
-            TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(-34, -60, Math.toRadians(90)))
-
-                    // Move forwards toward the middle spike
-                    .forward(30)
-                    .back(2)
+            TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(12, 60, Math.toRadians(270)))
+                    // Drive forwards towards the middle spike
+                    .forward(26)
                     .waitSeconds(1)
 
-                    // Open the servo above the spike
+                    // Open the servo above the middle spike
                     .addTemporalMarker(2.5,()->{
                         claw.setPosition(.72);
                     })
+                    .waitSeconds(1)
+
+                    // Back up away from the tile with all of the spikes
+                    .back(22)
+
+                    // Strafe to the exact parking coordinates
+                    .strafeTo(new Vector2d(50, 55))
                     .build();
 
-
-            // Follow the trajectory sequence above
+            // Follow the trajectory we made above
             drive.followTrajectorySequence(trajectory);
 
 
@@ -144,23 +150,35 @@ public class AutonRedFar extends LinearOpMode {
         // Otherwise, if our object is on the right side of our threshold, then it must be on the right spike
         else if (horizontalPos > THRESHOLD) {
 
-            TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(-34, -60, Math.toRadians(90)))
+            TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(12, 60, Math.toRadians(270)))
 
-                    // Drive forwards towards the tile with all of the spikes
+                    // Drive forwards toward the tile with all of the spikes
                     .forward(26)
 
-                    // Turn towards the right spike
+                    // Turn towards the spike on the right
                     .turn(Math.toRadians(-80))
 
                     .waitSeconds(1)
 
-                    // Place the pixel on the spike
-                    .addTemporalMarker(4, ()->{
+                    // Open the servo above the right spike
+                    .addTemporalMarker(4,()->{
                         claw.setPosition(0.72);
                     })
+                    .waitSeconds(1)
+
+                    .back(4)
+
+                    // Turn to face forwards again
+                    .turn(Math.toRadians(80))
+
+                    // Back away from the tile with all of the pixels
+                    .back(22)
+
+                    // Strafe to the exact parking coordinates
+                    .strafeTo(new Vector2d(50, 55))
                     .build();
 
-            // Follow the trajectory above
+            // Follow our trajectory sequence we made above
             drive.followTrajectorySequence(trajectory);
 
 
@@ -187,7 +205,7 @@ public class AutonRedFar extends LinearOpMode {
                 // Use setModelAssetName() if the TF Model is built in as an asset.
                 // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
                 //.setModelAssetName(TFOD_MODEL_ASSET)
-                .setModelFileName("red.tflite")
+                .setModelFileName("blue.tflite")
 
                 .setMaxNumRecognitions(1)
                 .setTrackerMaxOverlap(0.25f)
@@ -230,7 +248,7 @@ public class AutonRedFar extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.8f);
+        //tfod.setMinResultConfidence(0.75f);
 
         // Disable or re-enable the TFOD processor at any time.
         //visionPortal.setProcessorEnabled(tfod, true);

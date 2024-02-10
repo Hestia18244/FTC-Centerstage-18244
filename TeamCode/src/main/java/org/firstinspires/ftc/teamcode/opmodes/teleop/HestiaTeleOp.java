@@ -32,6 +32,8 @@ public class HestiaTeleOp extends OpMode {
 
     private Servo claw;
 
+
+
     // This is our timer used to track time in seconds
     private ElapsedTime timer = new ElapsedTime();
 
@@ -49,9 +51,7 @@ public class HestiaTeleOp extends OpMode {
 
     private double slide;
 
-    private final double LINEAR_TOWER_TICKS = 537.7;
-
-    private final double LINEAR_ACTUATOR_TICKS = 1425.1;
+    private final int SLIDER_THRESHOLD = -170;
 
     // This variable will help me determine whether or not to reset the time
     private boolean isFirstLoop = true;
@@ -75,8 +75,10 @@ public class HestiaTeleOp extends OpMode {
         launcher = hardwareMap.servo.get("launcher");
         claw = hardwareMap.servo.get("claw");
 
+        slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         towerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        towerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         towerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangingLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -147,7 +149,6 @@ public class HestiaTeleOp extends OpMode {
 
 
         slider.setPower(slide);
-        towerMotor.setPower(-tower);
         hangingRight.setPower((-gamepad2.right_trigger + gamepad2.left_trigger));
         hangingLeft.setPower((-gamepad2.right_trigger + gamepad2.left_trigger));
 
@@ -169,28 +170,19 @@ public class HestiaTeleOp extends OpMode {
         // Close claw
         if (gamepad2.right_bumper) {
             claw.setPosition(.42);
+
         }
 
-//        if (gamepad2.y){
-//            macro(22, linearActuator, LINEAR_ACTUATOR_TICKS);
-//        }
-//
-//        if (gamepad2.a){
-//            macro(2, linearActuator, LINEAR_ACTUATOR_TICKS);
-//        }
-//
-//        if (gamepad2.b){
-//            macro(0, linearActuator, LINEAR_ACTUATOR_TICKS);
-//        }
+        telemetry.addLine("Position of slider: " + slider.getCurrentPosition());
+        telemetry.update();
+
+        if (slider.getCurrentPosition() < SLIDER_THRESHOLD){
+            towerMotor.setPower(.1 + tower);
+        }
+        else {
+            towerMotor.setPower(tower);
+        }
 
     }
 
-    public void macro(double turnage, DcMotor motor, double ticks){
-        double towerTarget = turnage*ticks;
-
-        motor.setTargetPosition((int)(towerTarget));
-        motor.setPower(1);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-    }
 }

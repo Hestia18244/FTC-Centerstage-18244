@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.opmodes.auton;
+package org.firstinspires.ftc.teamcode.opmodes.auton.complex;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,19 +12,30 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
 
-//@Autonomous
-public class AutonBlueFar extends LinearOpMode {
+@Autonomous (group = "complex")
+public class BlueLeftComplex extends LinearOpMode {
 
     // List of servos
     private Servo claw;
 
-    private Servo launcher;
+    private Servo dumper;
+
+    private DcMotor tower;
+    private DcMotor frontRight;
+    private DcMotor frontLeft;
+    private DcMotor backRight;
+    private DcMotor backLeft;
+
+    private DcMotor slider;
+
+
 
     /**
      * The position of our object
@@ -67,15 +77,32 @@ public class AutonBlueFar extends LinearOpMode {
     public void runOpMode(){
 
         // Hardware mapping of our motors and servos
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        claw = hardwareMap.servo.get("claw");
-        launcher = hardwareMap.servo.get("launcher");
-        launcher.setPosition(0);
 
-        drive.setPoseEstimate(new Pose2d(-34, 60, Math.toRadians(270)));
+        claw = hardwareMap.servo.get("claw");
+        dumper = hardwareMap.servo.get("dumper");
+        tower = hardwareMap.dcMotor.get("tower");
+        frontRight = hardwareMap.dcMotor.get("frontRight");
+        frontLeft = hardwareMap.dcMotor.get("frontLeft");
+        backRight = hardwareMap.dcMotor.get("backRight");
+        backLeft = hardwareMap.dcMotor.get("backLeft");
+        slider = hardwareMap.dcMotor.get("slider");
+
+        slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        tower.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        tower.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        tower.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         // Setting the claw to an initial position
         claw.setPosition(.42);
+        dumper.setPosition(1);
 
         // Call this function to set up our tfod processor and VisionPortal
         initTfod();
@@ -93,51 +120,47 @@ public class AutonBlueFar extends LinearOpMode {
         // Because of this, we are able use the position of the object for our logic
 
         // If no object is detected, then we assume its the object on the left
-        if (horizontalPos == -100000 || confidence < .91 || numRecognitions == 2){
+        if (horizontalPos == -100000 || confidence < .9){
+
+            move(0, -750, 0, .5, 1000);
+            move(-1400, 0, 0, .5, 1000);
+            dumper.setPosition(.85);
+            sleep(1000);
+            move(1150, 0, 0, .5, 1000);
+            move(0, 0, -1075, .5, 1000);
+            move(-500, 0, 0, .5, 1000);
+            macro(.07);
+            sleep(1000);
+            slideMove();
+            sleep(1000);
+            move(0, 900, 0, .5, 1000);
+            move(-400, 0, 0, .5, 1000);
+            claw.setPosition(.6);
+            sleep(1000);
+            move(500, 0, 0, .5, 1000);
+            move(0, -800, 0, .5, 1000);
+            move(-400, 0, 0, .5, 1000);
 
 
-            // This is our trajectory sequence the robot will follow.
-            TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(-34, 60, Math.toRadians(270)))
-
-                    // Move forward to the tile with all of the spikes
-                    .forward(26)
-
-                    // Turn towards the spike on the left
-                    .turn(Math.toRadians(80))
-
-                    .forward(3)
-
-                    // Wait for a second before placing the pixel
-                    .waitSeconds(1)
-
-                    // Displacement marker to open the servo above the spike
-                    .addTemporalMarker(4.4,()->{
-                        claw.setPosition(.72);
-                    })
-
-                    .build();
-
-            // Follow the trajectory above
-            drive.followTrajectorySequence(trajectory);
         }
         // if our object is on the left side of our threshold, then our object is in the center
         else if (horizontalPos < THRESHOLD){
 
-
-            TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(-34, 60, Math.toRadians(270)))
-
-                    // Drive forwards to the middle spike
-                    .forward(28)
-                    .waitSeconds(1)
-
-                    // Place the pixel on the spike in the middle
-                    .addTemporalMarker(2.5,()->{
-                        claw.setPosition(.72);
-                    })
-                    .build();
-
-            // Follow the trajectory sequence above
-            drive.followTrajectorySequence(trajectory);
+            move(-1500, 0, 0, .5, 500);
+            dumper.setPosition(.85);
+            sleep(1000);
+            move(500, 0, 0, .5, 1000);
+            move(0, 0, -1000, .5, 1000);
+            macro(.07);
+            sleep(1000);
+            slideMove();
+            sleep(1000);
+            move(-1650, 0, 0, .5, 1000);
+            claw.setPosition(.6);
+            sleep(1000);
+            move(500, 0, 0, .5, 1000);
+            move(0, -1200, 0, .5, 1000);
+            move(-350, 0, 0, .5, 1000);
 
 
 
@@ -145,26 +168,24 @@ public class AutonBlueFar extends LinearOpMode {
         // Otherwise, if our object is on the right side of our threshold, then it must be on the right spike
         else if (horizontalPos > THRESHOLD) {
 
-            TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d(-34, 60, Math.toRadians(270)))
-
-                    // Drive forwards to the tile with all of the spikes
-                    .forward(26)
-
-                    // Turn towards the spike on the right
-                    .turn(Math.toRadians(-80))
-
-
-                    .waitSeconds(1)
-
-                    // Open the servo above the spike
-                    .addTemporalMarker(4,()->{
-                        claw.setPosition(0.72);
-                    })
-                    .build();
-
-            // Follow the trajectory we made above
-            drive.followTrajectorySequence(trajectory);
-
+            move(-1100, 0, 0, .5, 1000);
+            move(0, 0, 700, .5, 1000);
+            move(-250, 0, 0, .5, 1000);
+            dumper.setPosition(.85);
+            sleep(1000);
+            move(500, 0, 0, .5, 1000);
+            move(0, 0, -1800, .5, 1000);
+            macro(.07);
+            sleep(1000);
+            slideMove();
+            sleep(1000);
+            move(0, 600, 0, .5, 1000);
+            move(-1400, 0, 0, .5, 1000);
+            claw.setPosition(.72);
+            sleep(1000);
+            move(500, 0, 0, .5, 1000);
+            move(0, -1300, 0, .5, 1000);
+            move(-450, 0, 0, .5, 1000);
 
         }
 
@@ -271,4 +292,53 @@ public class AutonBlueFar extends LinearOpMode {
         return true;
 
     }
+
+    private void macro(double turnage){
+        double towerTarget = turnage*5281.1;
+
+        tower.setTargetPosition((int)(towerTarget));
+        tower.setPower(1);
+        tower.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (tower.isBusy()){
+
+        }
+
+    }
+
+
+    private void move(int forward, int strafe, int turn, double power, int ms){
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setTargetPosition(forward - strafe - turn);
+        frontRight.setTargetPosition(forward + strafe + turn);
+        backRight.setTargetPosition(forward - strafe + turn);
+        backLeft.setTargetPosition(forward + strafe - turn);
+
+        frontLeft.setPower(power);
+        frontRight.setPower(power);
+        backLeft.setPower(power);
+        backRight.setPower(power);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (frontLeft.isBusy() && frontRight.isBusy() && backRight.isBusy() && backLeft.isBusy()){
+
+        }
+
+        sleep(ms);
+
+    }
+
+    private void slideMove(){
+        slider.setTargetPosition(-400);
+        slider.setPower(1);
+        slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
 }

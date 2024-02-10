@@ -80,7 +80,7 @@ public class AutonRedDetection extends LinearOpMode {
     }
 
 
-    public void move(int forward, int strafe, int turn, double power, int ms){
+    private void move(int forward, int strafe, int turn, double power, int ms){
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

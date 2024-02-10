@@ -1,12 +1,8 @@
-package org.firstinspires.ftc.teamcode.opmodes.auton.test;
+package org.firstinspires.ftc.teamcode.opmodes.auton.simple;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -19,13 +15,12 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 
-@Autonomous
-public class AutonBlueFar extends LinearOpMode {
+@Autonomous (group = "simple")
+public class BlueRightSimple extends LinearOpMode {
 
     // List of servos
     private Servo claw;
 
-    private Servo launcher;
 
     /**
      * The position of our object
@@ -69,8 +64,7 @@ public class AutonBlueFar extends LinearOpMode {
         // Hardware mapping of our motors and servos
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         claw = hardwareMap.servo.get("claw");
-        launcher = hardwareMap.servo.get("launcher");
-        launcher.setPosition(0);
+
 
         drive.setPoseEstimate(new Pose2d(-34, 60, Math.toRadians(270)));
 
