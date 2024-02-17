@@ -126,21 +126,21 @@ public class RedRightComplex extends LinearOpMode {
 
             move(-1100, 0, 0, .5, 1000);
             move(0, 0, -700, .5, 1000);
-            move(-250, 0, 0, .5, 1000);
-            dumper.setPosition(.85);
+            move(-300, 0, 0, .5, 1000);
+            dumper.setPosition(.7);
             sleep(1000);
-            move(500, 0, 0, .5, 1000);
+            move(600, 0, 0, .5, 1000);
             move(0, 0, 1800, .5, 1000);
             macro(.07);
             sleep(1000);
             slideMove();
             sleep(1000);
-            move(0, -600, 0, .5, 1000);
+            move(0, -800, 0, .5, 1000);
             move(-1400, 0, 0, .5, 1000);
             claw.setPosition(.72);
             sleep(1000);
             move(500, 0, 0, .5, 1000);
-            move(0, 1300, 0, .5, 1000);
+            move(0, 1500, 0, .5, 1000);
             move(-450, 0, 0, .5, 1000);
 ;
         }
@@ -148,7 +148,7 @@ public class RedRightComplex extends LinearOpMode {
         else if (horizontalPos < THRESHOLD || numRecognitions == 2){
 
             move(-1500, 0, 0, .5, 500);
-            dumper.setPosition(.85);
+            dumper.setPosition(.7);
             sleep(1000);
             move(500, 0, 0, .5, 1000);
             move(0, 0, 1000, .5, 1000);
@@ -156,11 +156,13 @@ public class RedRightComplex extends LinearOpMode {
             sleep(1000);
             slideMove();
             sleep(1000);
-            move(-1650, 0, 0, .5, 1000);
+            move(-400, 0, 0, .5, 1000);
+            move(0, -300, 0, .5, 1000);
+            move(-1250, 0, 0, .5, 1000);
             claw.setPosition(.6);
             sleep(1000);
             move(500, 0, 0, .5, 1000);
-            move(0, 1200, 0, .5, 1000);
+            move(0, 1500, 0, .5, 1000);
             move(-350, 0, 0, .5, 1000);
 
 
@@ -170,7 +172,7 @@ public class RedRightComplex extends LinearOpMode {
 
             move(0, 750, 0, .5, 1000);
             move(-1400, 0, 0, .5, 1000);
-            dumper.setPosition(.85);
+            dumper.setPosition(.7);
             sleep(1000);
             move(1150, 0, 0, .5, 1000);
             move(0, 0, 1075, .5, 1000);

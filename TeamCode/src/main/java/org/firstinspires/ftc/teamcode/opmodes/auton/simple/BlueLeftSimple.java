@@ -21,6 +21,7 @@ public class BlueLeftSimple extends LinearOpMode {
 
     // List of servos
     private Servo claw;
+    private Servo dumper;
 
 
     /**
@@ -65,6 +66,8 @@ public class BlueLeftSimple extends LinearOpMode {
         // Hardware mapping of our motors and servos
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         claw = hardwareMap.servo.get("claw");
+        dumper = hardwareMap.servo.get("dumper");
+        dumper.setPosition(1);
 
         drive.setPoseEstimate(new Pose2d(12, 60, Math.toRadians(270)));
 
@@ -119,6 +122,8 @@ public class BlueLeftSimple extends LinearOpMode {
 
             // Follow the trajectory we made above
             drive.followTrajectorySequence(trajectory);
+            sleep(500);
+            dumper.setPosition(.7);
         }
         // if our object is on the left side of our threshold, then our object is in the center
         else if (horizontalPos < THRESHOLD){
@@ -143,7 +148,8 @@ public class BlueLeftSimple extends LinearOpMode {
 
             // Follow the trajectory we made above
             drive.followTrajectorySequence(trajectory);
-
+            sleep(500);
+            dumper.setPosition(.7);
 
 
         }
@@ -180,7 +186,8 @@ public class BlueLeftSimple extends LinearOpMode {
 
             // Follow our trajectory sequence we made above
             drive.followTrajectorySequence(trajectory);
-
+            sleep(500);
+            dumper.setPosition(.7);
 
         }
 
